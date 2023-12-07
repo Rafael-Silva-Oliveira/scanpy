@@ -1,29 +1,31 @@
+from __future__ import annotations
+
 import warnings
-from typing import Optional, Literal
+from typing import Literal
+
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp_sparse
 from anndata import AnnData
 
-
 from .. import logging as logg
-from .._settings import settings, Verbosity
-from .._utils import sanitize_anndata, check_nonnegative_integers
-from ._utils import _get_mean_var
+from .._settings import Verbosity, settings
+from .._utils import check_nonnegative_integers, sanitize_anndata
 from ._distributed import materialize_as_ndarray
 from ._simple import filter_genes
+from ._utils import _get_mean_var
 
 
 def _highly_variable_genes_seurat_v3(
     adata: AnnData,
-    layer: Optional[str] = None,
+    layer: str | None = None,
     n_top_genes: int = 2000,
-    batch_key: Optional[str] = None,
+    batch_key: str | None = None,
     check_values: bool = True,
     span: float = 0.3,
     subset: bool = False,
     inplace: bool = True,
-) -> Optional[pd.DataFrame]:
+) -> pd.DataFrame | None:
     """\
     See `highly_variable_genes`.
 
@@ -144,7 +146,7 @@ def _highly_variable_genes_seurat_v3(
     df["highly_variable"] = False
     df.loc[sorted_index[: int(n_top_genes)], "highly_variable"] = True
 
-    if inplace or subset:
+    if inplace:
         adata.uns["hvg"] = {"flavor": "seurat_v3"}
         logg.hint(
             "added\n"
@@ -170,17 +172,20 @@ def _highly_variable_genes_seurat_v3(
     else:
         if batch_key is None:
             df = df.drop(["highly_variable_nbatches"], axis=1)
+        if subset:
+            df = df.iloc[df.highly_variable.values, :]
+
         return df
 
 
 def _highly_variable_genes_single_batch(
     adata: AnnData,
-    layer: Optional[str] = None,
-    min_disp: Optional[float] = 0.5,
-    max_disp: Optional[float] = np.inf,
-    min_mean: Optional[float] = 0.0125,
-    max_mean: Optional[float] = 3,
-    n_top_genes: Optional[int] = None,
+    layer: str | None = None,
+    min_disp: float | None = 0.5,
+    max_disp: float | None = np.inf,
+    min_mean: float | None = 0.0125,
+    max_mean: float | None = 3,
+    n_top_genes: int | None = None,
     n_bins: int = 20,
     flavor: Literal["seurat", "cell_ranger"] = "seurat",
 ) -> pd.DataFrame:
@@ -298,20 +303,20 @@ def _highly_variable_genes_single_batch(
 
 def highly_variable_genes(
     adata: AnnData,
-    layer: Optional[str] = None,
-    n_top_genes: Optional[int] = None,
-    min_disp: Optional[float] = 0.5,
-    max_disp: Optional[float] = np.inf,
-    min_mean: Optional[float] = 0.0125,
-    max_mean: Optional[float] = 3,
-    span: Optional[float] = 0.3,
+    layer: str | None = None,
+    n_top_genes: int | None = None,
+    min_disp: float | None = 0.5,
+    max_disp: float | None = np.inf,
+    min_mean: float | None = 0.0125,
+    max_mean: float | None = 3,
+    span: float | None = 0.3,
     n_bins: int = 20,
     flavor: Literal["seurat", "cell_ranger", "seurat_v3"] = "seurat",
     subset: bool = False,
     inplace: bool = True,
-    batch_key: Optional[str] = None,
+    batch_key: str | None = None,
     check_values: bool = True,
-) -> Optional[pd.DataFrame]:
+) -> pd.DataFrame | None:
     """\
     Annotate highly variable genes [Satija15]_ [Zheng17]_ [Stuart19]_.
 
@@ -542,7 +547,7 @@ def highly_variable_genes(
 
     logg.info("    finished", time=start)
 
-    if inplace or subset:
+    if inplace:
         adata.uns["hvg"] = {"flavor": flavor}
         logg.hint(
             "added\n"
@@ -557,6 +562,7 @@ def highly_variable_genes(
         adata.var["dispersions_norm"] = df["dispersions_norm"].values.astype(
             "float32", copy=False
         )
+
         if batch_key is not None:
             adata.var["highly_variable_nbatches"] = df[
                 "highly_variable_nbatches"
@@ -566,5 +572,9 @@ def highly_variable_genes(
             ].values
         if subset:
             adata._inplace_subset_var(df["highly_variable"].values)
+
     else:
+        if subset:
+            df = df.iloc[df.highly_variable.values, :]
+
         return df
