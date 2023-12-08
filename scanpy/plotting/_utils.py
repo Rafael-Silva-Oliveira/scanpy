@@ -1135,6 +1135,13 @@ def circles(
     # You can set `facecolor` with an array for each patch,
     # while you can only set `facecolors` with a value for all.
     if scale_factor != 1.0:
+		# Check and convert to integers if needed - Fix for issue # 2778
+		if not np.issubdtype(x.dtype, np.integer) or not np.issubdtype(y.dtype, np.integer):
+			try:
+				x = x.astype(int)
+				y = y.astype(int)
+			except ValueError as e:
+				print("Error converting to int:", e)
         x = x * scale_factor
         y = y * scale_factor
     zipped = np.broadcast(x, y, s)
