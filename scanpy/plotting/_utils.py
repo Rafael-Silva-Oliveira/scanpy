@@ -103,16 +103,16 @@ def timeseries_subplot(
     marker: str | Sequence[str] = ".",
 ):
     """\
-    Plot X.
+	Plot X.
 
-    Parameters
-    ----------
-    X
-        Call this with:
-        X with one column, color categorical.
-        X with one column, color continuous.
-        X with n columns, color is of length n.
-    """
+	Parameters
+	----------
+	X
+		Call this with:
+		X with one column, color categorical.
+		X with one column, color continuous.
+		X with n columns, color is of length n.
+	"""
 
     if color is not None:
         use_color_map = isinstance(color[0], (float, np.floating))
@@ -168,15 +168,15 @@ def timeseries_as_heatmap(
     X: np.ndarray, var_names: Collection[str] = (), highlights_x=(), color_map=None
 ):
     """\
-    Plot timeseries as heatmap.
+	Plot timeseries as heatmap.
 
-    Parameters
-    ----------
-    X
-        Data array.
-    var_names
-        Array of strings naming variables stored in columns of X.
-    """
+	Parameters
+	----------
+	X
+		Data array.
+	var_names
+		Array of strings naming variables stored in columns of X.
+	"""
     if len(var_names) == 0:
         var_names = np.arange(X.shape[1])
     if var_names.ndim == 2:
@@ -271,7 +271,7 @@ def savefig(writekey, dpi=None, ext=None):
 
     The `filename` is generated as follows:
 
-        filename = settings.figdir / (writekey + settings.plot_suffix + '.' + settings.file_format_figs)
+            filename = settings.figdir / (writekey + settings.plot_suffix + '.' + settings.file_format_figs)
     """
     if dpi is None:
         # we need this as in notebooks, the internal figures are also influenced by 'savefig.dpi' this...
@@ -326,7 +326,7 @@ def savefig_or_show(
 
 
 def default_palette(
-    palette: str | Sequence[str] | Cycler | None = None
+    palette: str | Sequence[str] | Cycler | None = None,
 ) -> str | Cycler:
     if palette is None:
         return rcParams["axes.prop_cycle"]
@@ -378,13 +378,13 @@ def _set_colors_for_categorical_obs(
     Parameters
     ----------
     adata
-        annData object
+            annData object
     value_to_plot
-        name of a valid categorical observation
+            name of a valid categorical observation
     palette
-        Palette should be either a valid :func:`~matplotlib.pyplot.colormaps` string,
-        a sequence of colors (in a format that can be understood by matplotlib,
-        eg. RGB, RGBS, hex, or a cycler object with key='color'
+            Palette should be either a valid :func:`~matplotlib.pyplot.colormaps` string,
+            a sequence of colors (in a format that can be understood by matplotlib,
+            eg. RGB, RGBS, hex, or a cycler object with key='color'
 
     Returns
     -------
@@ -454,9 +454,9 @@ def _set_default_colors_for_categorical_obs(adata, value_to_plot):
     Parameters
     ----------
     adata
-        AnnData object
+            AnnData object
     value_to_plot
-        Name of a valid categorical observation
+            Name of a valid categorical observation
 
     Returns
     -------
@@ -702,7 +702,7 @@ def scatter_base(
     Parameters
     ----------
     Y
-        Data array.
+            Data array.
     projection
 
     Returns
@@ -834,9 +834,9 @@ def scatter_single(ax: Axes, Y: np.ndarray, *args, **kwargs):
     Parameters
     ----------
     ax
-        Axis to plot on.
+            Axis to plot on.
     Y
-        Data array, data to be plotted needs to be in the first two columns.
+            Data array, data to be plotted needs to be in the first two columns.
     """
     if "s" not in kwargs:
         kwargs["s"] = 2 if Y.shape[0] > 500 else 10
@@ -854,11 +854,11 @@ def arrows_transitions(ax: Axes, X: np.ndarray, indices: Sequence[int], weight=N
     Parameters
     ----------
     ax
-        Axis object from matplotlib.
+            Axis object from matplotlib.
     X
-        Data array, any representation wished (X, psi, phi, etc).
+            Data array, any representation wished (X, psi, phi, etc).
     indices
-        Indices storing the transitions.
+            Indices storing the transitions.
     """
     step = 1
     width = axis_to_data(ax, 0.001)
@@ -932,8 +932,8 @@ def hierarchy_pos(G, root, levels=None, width=1.0, height=1.0):
     G: the graph
     root: the root node
     levels: a dictionary
-            key: level number (starting from 0)
-            value: number of nodes in this level
+                    key: level number (starting from 0)
+                    value: number of nodes in this level
     width: horizontal space allocated for drawing
     height: vertical space allocated for drawing
     """
@@ -1016,9 +1016,9 @@ def get_ax_size(ax: Axes, fig: Figure):
     Parameters
     ----------
     ax
-        Axis object from matplotlib.
+            Axis object from matplotlib.
     fig
-        Figure.
+            Figure.
     """
     bbox = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
     width, height = bbox.width, bbox.height
@@ -1033,9 +1033,9 @@ def axis_to_data(ax: Axes, width: float):
     Parameters
     ----------
     ax
-        Axis object from matplotlib.
+            Axis object from matplotlib.
     width
-        Width in xaxis coordinates.
+            Width in xaxis coordinates.
     """
     xlim = ax.get_xlim()
     widthx = width * (xlim[1] - xlim[0])
@@ -1052,9 +1052,9 @@ def axis_to_data_points(ax: Axes, points_axis: np.ndarray):
     Parameters
     ----------
     ax
-        Axis object from matplotlib.
+            Axis object from matplotlib.
     points_axis
-        Points in axis coordinates.
+            Points in axis coordinates.
     """
     axis_to_data = ax.transAxes + ax.transData.inverted()
     return axis_to_data.transform(points_axis)
@@ -1068,9 +1068,9 @@ def data_to_axis_points(ax: Axes, points_data: np.ndarray):
     Parameters
     ----------
     ax
-        Axis object from matplotlib.
+            Axis object from matplotlib.
     points_data
-        Points in data coordinates.
+            Points in data coordinates.
     """
     data_to_axis = axis_to_data.inverted()
     return data_to_axis(points_data)
@@ -1100,24 +1100,24 @@ def circles(
     Parameters
     ----------
     x, y : scalar or array_like, shape (n, )
-        Input data
+            Input data
     s : scalar or array_like, shape (n, )
-        Radius of circles.
+            Radius of circles.
     c : color or sequence of color, optional, default : 'b'
-        `c` can be a single color format string, or a sequence of color
-        specifications of length `N`, or a sequence of `N` numbers to be
-        mapped to colors using the `cmap` and `norm` specified via kwargs.
-        Note that `c` should not be a single numeric RGB or RGBA sequence
-        because that is indistinguishable from an array of values
-        to be colormapped. (If you insist, use `color` instead.)
-        `c` can be a 2-D array in which the rows are RGB or RGBA, however.
+            `c` can be a single color format string, or a sequence of color
+            specifications of length `N`, or a sequence of `N` numbers to be
+            mapped to colors using the `cmap` and `norm` specified via kwargs.
+            Note that `c` should not be a single numeric RGB or RGBA sequence
+            because that is indistinguishable from an array of values
+            to be colormapped. (If you insist, use `color` instead.)
+            `c` can be a 2-D array in which the rows are RGB or RGBA, however.
     vmin, vmax : scalar, optional, default: None
-        `vmin` and `vmax` are used in conjunction with `norm` to normalize
-        luminance data.  If either are `None`, the min and max of the
-        color array is used.
+            `vmin` and `vmax` are used in conjunction with `norm` to normalize
+            luminance data.  If either are `None`, the min and max of the
+            color array is used.
     kwargs : `~matplotlib.collections.Collection` properties
-        Eg. alpha, edgecolor(ec), facecolor(fc), linewidth(lw), linestyle(ls),
-        norm, cmap, transform, etc.
+            Eg. alpha, edgecolor(ec), facecolor(fc), linewidth(lw), linestyle(ls),
+            norm, cmap, transform, etc.
     Returns
     -------
     paths : `~matplotlib.collections.PathCollection`
@@ -1135,6 +1135,14 @@ def circles(
     # You can set `facecolor` with an array for each patch,
     # while you can only set `facecolors` with a value for all.
     if scale_factor != 1.0:
+        if not np.issubdtype(x.dtype, np.integer) or not np.issubdtype(
+            y.dtype, np.integer
+        ):
+            try:
+                x = x.astype(int)
+                y = y.astype(int)
+            except ValueError as e:
+                print("Error converting to int:", e)
         x = x * scale_factor
         y = y * scale_factor
     zipped = np.broadcast(x, y, s)
